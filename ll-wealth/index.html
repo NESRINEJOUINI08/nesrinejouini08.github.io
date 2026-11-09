@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LL Wealth — Patrimônio que atravessa gerações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --navy: #0F1B3D;
+  --navy-dark: #090f22;
+  --navy-mid: #0d1830;
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-mid: #d4b46a;
+  --white: #ffffff;
+  --off-white: #f8f9fb;
+  --light-gray: #f2f3f6;
+  --text-dark: #111827;
+  --text-mid: #374151;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  color: var(--text-dark);
+  background: var(--white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ───────────────────────────────────────
+   NAVIGATION
+─────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(9, 15, 34, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.nav-logo svg .nav-stroke { stroke: #ffffff; }
+.nav-logo svg text { fill: #ffffff; }
+.nav-logo svg .nav-wealth { fill: rgba(255,255,255,0.75); }
+.nav-logo svg .nav-sep { stroke: rgba(255,255,255,0.25); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-links a:hover {
+  color: var(--gold-light);
+}
+
+.nav-cta {
+  background: var(--gold);
+  color: var(--navy-dark);
+  padding: 0.6rem 1.4rem;
+  border-radius: 2rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: var(--gold-light);
+}
+
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 2px;
+}
+
+/* ───────────────────────────────────────
+   HERO
+─────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  background: var(--navy-dark);
+  background-image:
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(201, 168, 76, 0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(15, 27, 61, 0.9) 0%, transparent 60%);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-geo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero-geo-inner {
+  position: absolute;
+  top: 50%;
+  right: 6%;
+  transform: translateY(-50%);
+  width: 420px;
+  height: 420px;
+}
+
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 7rem 2rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+.hero-label::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.hero-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--white);
+  max-width: 640px;
+  margin-bottom: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+.hero-headline em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.65);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--gold);
+  color: var(--navy-dark);
+  padding: 0.9rem 2rem;
+  border-radius: 2rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background: var(--gold-light);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  padding: 0.9rem 2rem;
+  border-radius: 2rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(255,255,255,0.25);
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.hero-disclaimer {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-left: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  max-width: 700px;
+}
+
+.hero-disclaimer p {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.6;
+}
+
+/* ───────────────────────────────────────
+   TRUST BAR
+─────────────────────────────────────── */
+#trust {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+}
+
+.trust-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  justify-content: space-around;
+  align-items: stretch;
+}
+
+.trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem 2rem;
+  flex: 1;
+  min-width: 200px;
+  border-right: 1px solid var(--border);
+}
+
+.trust-item:last-child {
+  border-right: none;
+}
+
+.trust-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--navy-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.trust-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.trust-text strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.2rem;
+}
+
+.trust-text span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ───────────────────────────────────────
+   SECTION SHARED
+─────────────────────────────────────── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.section-label::before {
+  content: '———';
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+}
+
+.section-label.dark {
+  color: var(--navy);
+}
+
+.section-label.gold {
+  color: var(--gold);
+}
+
+/* ───────────────────────────────────────
+   ESPECIALIDADES
+─────────────────────────────────────── */
+#especialidades {
+  background: var(--white);
+  padding: 6rem 2rem;
+}
+
+.especialidades-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.especialidades-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.especialidades-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.2;
+  max-width: 480px;
+}
+
+.especialidades-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.especialidades-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  max-width: 320px;
+  line-height: 1.65;
+}
+
+.especialidades-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.espec-card {
+  background: var(--white);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+}
+
+.espec-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.espec-card:hover::after {
+  transform: scaleX(1);
+}
+
+.espec-card:hover {
+  background: var(--off-white);
+}
+
+.espec-number {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  font-family: 'Inter', sans-serif;
+}
+
+.espec-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.espec-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+}
+
+.espec-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ───────────────────────────────────────
+   SOBRE
+─────────────────────────────────────── */
+#sobre {
+  background: var(--off-white);
+  padding: 6rem 2rem;
+}
+
+.sobre-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.sobre-left {}
+
+.sobre-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.sobre-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.sobre-text {
+  font-size: 0.93rem;
+  color: var(--text-mid);
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+}
+
+.sobre-valores {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.valor-pill {
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  text-transform: uppercase;
+}
+
+.sobre-right {}
+
+.sobre-visual {
+  position: relative;
+}
+
+.sobre-card-main {
+  background: var(--navy-dark);
+  border-radius: 12px;
+  padding: 2.5rem;
+  color: var(--white);
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.sobre-card-main::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.07);
+}
+
+.sobre-card-main-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.sobre-card-main-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--white);
+}
+
+.sobre-card-main-text em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.sobre-cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.sobre-card-mini {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.sobre-card-mini-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.sobre-card-mini-num span {
+  color: var(--gold);
+}
+
+.sobre-card-mini-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ───────────────────────────────────────
+   COMO FUNCIONA
+─────────────────────────────────────── */
+#processo {
+  background: var(--white);
+  padding: 6rem 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.processo-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.processo-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.processo-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.75rem;
+}
+
+.processo-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.processo-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+.processo-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+.processo-steps::before {
+  content: '';
+  position: absolute;
+  top: 2.5rem;
+  left: 12.5%;
+  right: 12.5%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+}
+
+.passo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+.passo-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--navy-dark);
+  color: var(--gold);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+  border: 2px solid var(--gold);
+}
+
+.passo-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.passo-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ───────────────────────────────────────
+   CTA FINAL
+─────────────────────────────────────── */
+#cta-final {
+  background: var(--navy-dark);
+  background-image:
+    radial-gradient(ellipse 50% 70% at 90% 50%, rgba(201, 168, 76, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 5% 20%, rgba(201, 168, 76, 0.05) 0%, transparent 50%);
+  padding: 7rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-final-geo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  pointer-events: none;
+}
+
+.cta-final-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.cta-final-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 1.75rem;
+}
+
+.cta-final-label::before {
+  content: '———';
+  font-size: 0.65rem;
+}
+
+.cta-final-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+}
+
+.cta-final-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.cta-final-sub {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-final-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.btn-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #25D366;
+  color: #ffffff;
+  padding: 1rem 2.2rem;
+  border-radius: 2rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+}
+
+.btn-wa:hover {
+  background: #22c55e;
+}
+
+.btn-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  padding: 1rem 2.2rem;
+  border-radius: 2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.btn-email:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.cta-final-email-text {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ───────────────────────────────────────
+   FOOTER
+─────────────────────────────────────── */
+footer {
+  background: var(--navy-dark);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 3.5rem 2rem 2rem;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-brand {}
+
+.footer-logo-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.footer-tagline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.footer-contact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+}
+
+.footer-contact-item a {
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+}
+
+.footer-contact-item a:hover {
+  color: var(--gold-light);
+}
+
+.footer-col-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.25rem;
+}
+
+.footer-nav {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.footer-nav a {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+.footer-nav a:hover {
+  color: var(--gold-light);
+}
+
+.footer-valores-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-valor {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+}
+
+.footer-valor::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+.footer-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin-bottom: 2rem;
+}
+
+.footer-disclaimer-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-left: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.footer-disclaimer-box p {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.65;
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.footer-copy {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+}
+
+.footer-awt {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.06em;
+}
+
+/* ───────────────────────────────────────
+   RESPONSIVE
+─────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .especialidades-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sobre-inner {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .processo-steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+
+  .processo-steps::before {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+
+  .hero-geo-inner {
+    width: 280px;
+    height: 280px;
+    opacity: 0.15;
+    right: -30px;
+  }
+
+  .especialidades-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .especialidades-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .trust-inner {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .trust-item {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 0.5rem;
+  }
+
+  .trust-item:last-child {
+    border-bottom: none;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .processo-steps {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .sobre-cards-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .sobre-cards-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-final-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     NAV
+══════════════════════════════════════= -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 90" width="180" height="51">
+      <defs>
+        <linearGradient id="goldGradNav" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#C9A84C;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#E8C97A;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <g transform="translate(18, 45)">
+        <polygon points="32,0 58,22 32,44 6,22" fill="none" stroke="#ffffff" stroke-width="2.2"/>
+        <polygon points="32,10 48,22 32,34 16,22" fill="none" stroke="url(#goldGradNav)" stroke-width="1.6"/>
+        <circle cx="32" cy="22" r="3.2" fill="url(#goldGradNav)"/>
+        <line x1="6" y1="22" x2="16" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="1.4"/>
+        <line x1="48" y1="22" x2="58" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="1.4"/>
+      </g>
+      <text x="96" y="58" font-family="Arial, Montserrat, sans-serif" font-size="42" font-weight="700" letter-spacing="-1" fill="#ffffff">LL</text>
+      <circle cx="162" cy="46" r="4.5" fill="url(#goldGradNav)"/>
+      <line x1="178" y1="28" x2="178" y2="66" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+      <text x="191" y="58" font-family="Arial, Montserrat, sans-serif" font-size="13" font-weight="400" letter-spacing="5" fill="rgba(255,255,255,0.75)">WEALTH</text>
+      <rect x="191" y="65" width="88" height="1.5" rx="1" fill="url(#goldGradNav)" opacity="0.7"/>
+    </svg>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#especialidades">Especialidades</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#processo">Como funciona</a></li>
+  </ul>
+
+  <a href="https://wa.me/5511987774464" class="nav-cta" target="_blank" rel="noopener">Agende uma conversa</a>
+
+  <button class="nav-hamburger" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HERO
+══════════════════════════════════════= -->
+<section id="hero">
+
+  <!-- Geometric background decoration -->
+  <div class="hero-geo">
+    <div class="hero-geo-inner">
+      <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+        <!-- Outer ring -->
+        <circle cx="210" cy="210" r="195" fill="none" stroke="rgba(201,168,76,0.08)" stroke-width="1"/>
+        <circle cx="210" cy="210" r="155" fill="none" stroke="rgba(201,168,76,0.06)" stroke-width="1"/>
+        <circle cx="210" cy="210" r="115" fill="none" stroke="rgba(201,168,76,0.08)" stroke-width="0.5"/>
+        <!-- Large diamond -->
+        <polygon points="210,30 370,210 210,390 50,210" fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="1.5"/>
+        <!-- Medium diamond -->
+        <polygon points="210,80 320,210 210,340 100,210" fill="none" stroke="rgba(201,168,76,0.1)" stroke-width="1"/>
+        <!-- Inner diamond -->
+        <polygon points="210,130 280,210 210,290 140,210" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+        <!-- Center -->
+        <circle cx="210" cy="210" r="8" fill="rgba(201,168,76,0.2)"/>
+        <circle cx="210" cy="210" r="3" fill="rgba(201,168,76,0.5)"/>
+        <!-- Cross lines -->
+        <line x1="210" y1="30" x2="210" y2="390" stroke="rgba(201,168,76,0.05)" stroke-width="0.5"/>
+        <line x1="30" y1="210" x2="390" y2="210" stroke="rgba(201,168,76,0.05)" stroke-width="0.5"/>
+        <!-- Diagonal crosses -->
+        <line x1="50" y1="50" x2="370" y2="370" stroke="rgba(201,168,76,0.04)" stroke-width="0.5"/>
+        <line x1="370" y1="50" x2="50" y2="370" stroke="rgba(201,168,76,0.04)" stroke-width="0.5"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-label">Multi Family Office Independente</div>
+
+    <h1 class="hero-headline">
+      Patrimônio que<br>
+      <em>atravessa</em><br>
+      gerações.
+    </h1>
+
+    <p class="hero-sub">
+      Organizamos, estruturamos e planejamos o seu patrimônio com independência, transparência e visão de longo prazo — para que ele perdure muito além de você.
+    </p>
+
+    <div class="hero-actions">
+      <a href="https://wa.me/5511987774464" class="btn-primary" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="currentColor"/>
+          <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.306A9.96 9.96 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        Converse sobre seu planejamento
+      </a>
+      <a href="#sobre" class="btn-secondary">
+        Conheça o LL Wealth
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="hero-disclaimer">
+      <p>LL Wealth integra o ecossistema AWT Group por meio do vínculo de seus profissionais com a AWT Independence S.A. A gestão profissional de carteiras é realizada pela AWT Consultoria e Administração de Valores Mobiliários Ltda., CNPJ 35.137.445/0001-00, registrada perante a CVM.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TRUST BAR
+══════════════════════════════════════= -->
+<section id="trust">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <div class="trust-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="trust-text">
+        <strong>Independência total</strong>
+        <span>Sem conflito de interesse. Sua família em primeiro lugar.</span>
+      </div>
+    </div>
+
+    <div class="trust-item">
+      <div class="trust-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="trust-text">
+        <strong>Mais de 15 anos de experiência</strong>
+        <span>Profissionais formados no mercado financeiro de alto padrão.</span>
+      </div>
+    </div>
+
+    <div class="trust-item">
+      <div class="trust-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="trust-text">
+        <strong>Uma única estratégia de planejamento</strong>
+        <span>Visão integrada do patrimônio da família, não de produtos isolados.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     ESPECIALIDADES
+══════════════════════════════════════= -->
+<section id="especialidades">
+  <div class="especialidades-inner">
+    <div class="especialidades-header">
+      <div>
+        <div class="section-label dark">Especialidades</div>
+        <h2 class="especialidades-title">
+          Estrutura completa para<br>
+          <em>cada dimensão</em><br>
+          do seu patrimônio
+        </h2>
+      </div>
+      <p class="especialidades-desc">
+        Mapeamos, planejamos e acompanhamos cada classe de ativo do seu portfólio — com rigor técnico e independência.
+      </p>
+    </div>
+
+    <div class="especialidades-grid">
+      <!-- Renda Fixa -->
+      <div class="espec-card">
+        <div class="espec-number">01</div>
+        <svg class="espec-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="26" width="6" height="10" rx="1" fill="#0F1B3D" opacity="0.15"/>
+          <rect x="14" y="20" width="6" height="16" rx="1" fill="#0F1B3D" opacity="0.3"/>
+          <rect x="22" y="14" width="6" height="22" rx="1" fill="#C9A84C" opacity="0.6"/>
+          <rect x="30" y="8" width="6" height="28" rx="1" fill="#C9A84C"/>
+        </svg>
+        <div class="espec-name">Renda Fixa</div>
+        <p class="espec-desc">Estruturação de carteiras de renda fixa com foco em preservação e previsibilidade de longo prazo.</p>
+      </div>
+
+      <!-- Renda Variável -->
+      <div class="espec-card">
+        <div class="espec-number">02</div>
+        <svg class="espec-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="4,32 12,22 18,26 26,14 32,18 38,8" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="38" cy="8" r="3" fill="#C9A84C"/>
+        </svg>
+        <div class="espec-name">Renda Variável</div>
+        <p class="espec-desc">Planejamento em renda variável com seleção criteriosa e acompanhamento contínuo da carteira.</p>
+      </div>
+
+      <!-- Multimercado -->
+      <div class="espec-card">
+        <div class="espec-number">03</div>
+        <svg class="espec-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="13" fill="none" stroke="#0F1B3D" stroke-width="1.5" opacity="0.2"/>
+          <path d="M20 7 L20 20 L28 28" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="20" cy="20" r="2.5" fill="#0F1B3D"/>
+          <path d="M7 20 L20 20" fill="none" stroke="#0F1B3D" stroke-width="1" opacity="0.3"/>
+        </svg>
+        <div class="espec-name">Multimercado</div>
+        <p class="espec-desc">Estratégias diversificadas que combinam diferentes classes, buscando equilíbrio e consistência.</p>
+      </div>
+
+      <!-- Internacional / Offshore -->
+      <div class="espec-card">
+        <div class="espec-number">04</div>
+        <svg class="espec-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="13" fill="none" stroke="#C9A84C" stroke-width="1.8"/>
+          <ellipse cx="20" cy="20" rx="6" ry="13" fill="none" stroke="#C9A84C" stroke-width="1" opacity="0.5"/>
+          <line x1="7" y1="20" x2="33" y2="20" stroke="#0F1B3D" stroke-width="1" opacity="0.3"/>
+          <line x1="10" y1="13" x2="30" y2="13" stroke="#0F1B3D" stroke-width="1" opacity="0.2"/>
+          <line x1="10" y1="27" x2="30" y2="27" stroke="#0F1B3D" stroke-width="1" opacity="0.2"/>
+        </svg>
+        <div class="espec-name">Internacional / Offshore</div>
+        <p class="espec-desc">Planejamento patrimonial no exterior com estruturas offshore adaptadas ao perfil familiar.</p>
+      </div>
+
+      <!-- Crédito Privado -->
+      <div class="espec-card">
+        <div class="espec-number">05</div>
+        <svg class="espec-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="12" width="28" height="18" rx="3" fill="none" stroke="#0F1B3D" stroke-width="1.8" opacity="0.3"/>
+          <rect x="6" y="17" width="28" height="4" fill="#C9A84C" opacity="0.25"/>
+          <rect x="10" y="24" width="8" height="2.5" rx="1" fill="#C9A84C" opacity="0.7"/>
+        </svg>
+        <div class="espec-name">Crédito Privado</div>
+        <p class="espec-desc">Mapeamento e estruturação em crédito privado com análise rigorosa de risco e retorno.</p>
+      </div>
+
+      <!-- Private Equity -->
+      <div class="espec-card">
+        <div class="espec-number">06</div>
+        <svg class="espec-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="20,6 34,14 34,26 20,34 6,26 6,14" fill="none" stroke="#C9A84C" stroke-width="1.8"/>
+          <polygon points="20,13 27,17 27,23 20,27 13,23 13,17" fill="#C9A84C" opacity="0.15"/>
+          <circle cx="20" cy="20" r="3" fill="#C9A84C"/>
+        </svg>
+        <div class="espec-name">Private Equity</div>
+        <p class="espec-desc">Acesso a oportunidades estruturadas em empresas privadas com potencial de longo prazo.</p>
+      </div>
+
+      <!-- Imobiliário -->
+      <div class="espec-card">
+        <div class="espec-number">07</div>
+        <svg class="espec-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="20,6 34,18 34,36 6,36 6,18" fill="none" stroke="#0F1B3D" stroke-width="1.8" opacity="0.4"/>
+          <polygon points="20,6 34,18 20,18" fill="#C9A84C" opacity="0.15"/>
+          <rect x="14" y="26" width="5" height="10" rx="1" fill="#C9A84C" opacity="0.6"/>
+          <rect x="21" y="22" width="6" height="6" rx="1" fill="#0F1B3D" opacity="0.2"/>
+        </svg>
+        <div class="espec-name">Imobiliário</div>
+        <p class="espec-desc">Planejamento e estruturação patrimonial no segmento imobiliário, direto e via fundos.</p>
+      </div>
+
+      <!-- Uma única estratégia -->
+      <div class="espec-card" style="background: var(--navy-dark);">
+        <div class="espec-number" style="color: var(--gold);">∞</div>
+        <svg class="espec-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="13" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="1.5"/>
+          <circle cx="20" cy="20" r="8" fill="none" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
+          <circle cx="20" cy="20" r="3" fill="#C9A84C"/>
+        </svg>
+        <div class="espec-name" style="color: var(--white);">Uma única estratégia de planejamento</div>
+        <p class="espec-desc" style="color: rgba(255,255,255,0.55);">Todas as classes, consolidadas em uma visão patrimonial integrada — sem fragmentação, sem ruído.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SOBRE
+══════════════════════════════════════= -->
+<section id="sobre">
+  <div class="sobre-inner">
+    <div class="sobre-left">
+      <div class="section-label dark">Sobre o LL Wealth</div>
+
+      <h2 class="sobre-title">
+        Referência em Wealth Management para quem <em>constrói</em> e preserva
+      </h2>
+
+      <p class="sobre-text">
+        O LL Wealth nasceu com uma missão clara: proteger, estruturar e planejar o patrimônio das famílias, garantindo sua preservação e perpetuidade ao longo das gerações.
+      </p>
+
+      <p class="sobre-text">
+        Atendemos empresários e famílias com patrimônio em construção ou consolidação — que buscam organização, proteção e planejamento de longo prazo. Pessoas que valorizam independência, confiança e visão estratégica.
+      </p>
+
+      <p class="sobre-text">
+        Com mais de 15 anos de mercado financeiro, construímos uma forma de trabalho fundamentada na ética e na experiência — porque seu patrimônio merece profissionais que entendem o que está em jogo.
+      </p>
+
+      <div class="sobre-valores">
+        <span class="valor-pill">Independência</span>
+        <span class="valor-pill">Transparência</span>
+        <span class="valor-pill">Ética</span>
+        <span class="valor-pill">Compromisso</span>
+        <span class="valor-pill">Experiência</span>
+      </div>
+    </div>
+
+    <div class="sobre-right">
+      <div class="sobre-visual">
+        <div class="sobre-card-main">
+          <div class="sobre-card-main-label">Nossa visão</div>
+          <div class="sobre-card-main-text">
+            Ser referência em Wealth Management para jovens empresários que buscam organizar, estruturar e <em>perpetuar</em> seu patrimônio.
+          </div>
+        </div>
+
+        <div class="sobre-cards-row">
+          <div class="sobre-card-mini">
+            <div class="sobre-card-mini-num">15<span>+</span></div>
+            <div class="sobre-card-mini-label">anos de experiência no mercado financeiro</div>
+          </div>
+          <div class="sobre-card-mini">
+            <div class="sobre-card-mini-num">7<span style="color: var(--gold);">·</span></div>
+            <div class="sobre-card-mini-label">especialidades integradas em uma única estratégia</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     COMO FUNCIONA
+══════════════════════════════════════= -->
+<section id="processo">
+  <div class="processo-inner">
+    <div class="processo-header">
+      <div class="section-label dark" style="justify-content: center;">Como funciona</div>
+      <h2 class="processo-title">
+        Do diagnóstico ao <em>planejamento</em> estruturado
+      </h2>
+      <p class="processo-sub">Um processo claro, sem atalhos. Construímos juntos, passo a passo.</p>
+    </div>
+
+    <div class="processo-steps">
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-title">Conversa inicial</div>
+        <p class="passo-desc">Entendemos sua realidade patrimonial, seus objetivos e o momento que você vive.</p>
+      </div>
+
+      <div class="passo">
+        <div class="passo-num">2</div>
+        <div class="passo-title">Mapeamento patrimonial</div>
+        <p class="passo-desc">Consolidamos e mapeamos todo o seu patrimônio, identificando oportunidades e pontos de atenção.</p>
+      </div>
+
+      <div class="passo">
+        <div class="passo-num">3</div>
+        <div class="passo-title">Estruturação do plano</div>
+        <p class="passo-desc">Desenvolvemos uma estratégia de planejamento integrada, alinhada à sua visão de longo prazo.</p>
+      </div>
+
+      <div class="passo">
+        <div class="passo-num">4</div>
+        <div class="passo-title">Acompanhamento contínuo</div>
+        <p class="passo-desc">Monitoramos, ajustamos e simplificamos — para que seu patrimônio siga organizado ao longo do tempo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     CTA FINAL
+══════════════════════════════════════= -->
+<section id="cta-final">
+  <!-- Background geo -->
+  <div class="cta-final-geo">
+    <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <polygon points="300,30 550,165 550,435 300,570 50,435 50,165" fill="none" stroke="rgba(201,168,76,0.07)" stroke-width="1.5"/>
+      <polygon points="300,80 500,195 500,405 300,520 100,405 100,195" fill="none" stroke="rgba(201,168,76,0.05)" stroke-width="1"/>
+      <polygon points="300,130 450,225 450,375 300,470 150,375 150,225" fill="none" stroke="rgba(201,168,76,0.07)" stroke-width="0.5"/>
+      <circle cx="300" cy="300" r="4" fill="rgba(201,168,76,0.3)"/>
+    </svg>
+  </div>
+
+  <div class="cta-final-inner">
+    <div class="cta-final-label">Próximo passo</div>
+
+    <h2 class="cta-final-title">
+      Organize seu patrimônio<br>
+      com quem entende<br>
+      o que está em <em>jogo</em>
+    </h2>
+
+    <p class="cta-final-sub">
+      Uma conversa sem compromisso para entender como podemos estruturar e planejar o seu patrimônio.
+    </p>
+
+    <div class="cta-final-actions">
+      <a href="https://wa.me/5511987774464" class="btn-wa" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1
