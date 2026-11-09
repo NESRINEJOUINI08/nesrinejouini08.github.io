@@ -1071,8 +1071,8 @@ function rRevisao(p, step, si, steps) {
 const PUB_STEPS = [
   { icon: '🐙', label: 'Push no GitHub',       getDetail: s => `awt-mkt-hub/awt-mkt-hub.github.io / ${s}/index.html` },
   { icon: '📦', label: 'Arquivos commitados',  getDetail: s => `${s}/index.html + ${s}/logo.svg` },
-  { icon: '📄', label: 'GitHub Pages ativado', getDetail: s => `awt-mkt-hub.github.io` },
-  { icon: '🌐', label: 'Site publicado',        getDetail: s => `https://awt-mkt-hub.github.io/${s}/` },
+  { icon: '▲',  label: 'Deploy no Vercel',     getDetail: s => `${s}.vercel.app` },
+  { icon: '🌐', label: 'Site publicado',        getDetail: s => `https://${s}.vercel.app` },
 ];
 
 function rPublicar(p, step, si, steps) {
@@ -1956,34 +1956,52 @@ async function animatePublish(pid) {
 
   setStep(1); // commit feito
 
-  // ── STEP 2: ativar GitHub Pages (se não estiver ativo) ──
+  // ── STEP 2: deploy no Vercel ──
   setStep(2);
-  try {
-    const pagesUrl = `https://api.github.com/repos/${ghOwner}/${ghRepo}/pages`;
-    const pagesCheck = await fetch(pagesUrl, {
-      headers: { Authorization: `Bearer ${ghToken}`, Accept: 'application/vnd.github+json' }
-    });
-    if (!pagesCheck.ok) {
-      // Pages não ativado — tenta ativar
-      const activateRes = await fetch(pagesUrl, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${ghToken}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ source: { branch: 'main', path: '/' } })
-      });
-      if (!activateRes.ok && activateRes.status !== 409) {
-        const e = await activateRes.json();
-        // não fatal — continua mesmo se falhar (pode precisar de permissão extra)
-        console.warn('GitHub Pages activate:', e.message);
-      }
-    }
-  } catch(e) { console.warn('GitHub Pages check:', e.message); }
+  let vercelUrl = null;
+  if (vcToken) {
+    try {
+      const deployFiles = [
+        { file: 'index.html', data: siteHtml, encoding: 'utf8' }
+      ];
+      if (logoSvg) deployFiles.push({ file: 'logo.svg', data: logoSvg, encoding: 'utf8' });
 
-  // ── STEP 3: URL final GitHub Pages ──
+      const deployRes = await fetch('https://api.vercel.com/v13/deployments', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${vcToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: slug,
+          target: 'production',
+          files: deployFiles,
+          projectSettings: { framework: null }
+        })
+      });
+
+      const d = await deployRes.json();
+      if (!deployRes.ok) {
+        console.warn('[Vercel] Deploy error:', d.error?.message || JSON.stringify(d));
+        // não fatal — cai no fallback GitHub Pages
+      } else {
+        // URL de produção: d.url é o alias de produção (slug.vercel.app)
+        vercelUrl = `https://${d.url || slug + '.vercel.app'}`;
+        // aguarda deploy propagar (Vercel é rápido, ~5-10s)
+        await new Promise(r => setTimeout(r, 5000));
+        console.log('[Vercel] Deploy OK:', vercelUrl);
+      }
+    } catch(e) {
+      console.warn('[Vercel] Error:', e.message);
+    }
+  } else {
+    console.warn('[Vercel] Token não configurado — pulando deploy Vercel');
+    await new Promise(r => setTimeout(r, 600));
+  }
+
+  // ── STEP 3: URL final ──
   setStep(3);
-  await new Promise(r => setTimeout(r, 800)); // pequena pausa visual
+  await new Promise(r => setTimeout(r, 600));
 
   S.pubSt = 'done';
-  S.pubUrl = `https://${ghOwner}.github.io/${slug}/`;
+  S.pubUrl = vercelUrl || `https://${ghOwner}.github.io/${slug}/`;
   render();
 }
 
