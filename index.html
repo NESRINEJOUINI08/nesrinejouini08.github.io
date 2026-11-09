@@ -1103,7 +1103,7 @@ function rPublicar(p, step, si, steps) {
     </div>`;
   }
   if (pubSt === 'done') {
-    const url = S.pubUrl || `https://awt-${p.slug}.vercel.app`;
+    const url = S.pubUrl || `https://${p.slug}.vercel.app`;
     return `<div class="sc">
       <div class="sc-head"><h2>🚀 Publicado!</h2><p>Site no ar.</p></div>
       <div class="card">${rows}</div>
@@ -1982,11 +1982,11 @@ async function animatePublish(pid) {
         console.warn('[Vercel] Deploy error:', d.error?.message || JSON.stringify(d));
         // não fatal — cai no fallback GitHub Pages
       } else {
-        // URL de produção: d.url é o alias de produção (slug.vercel.app)
-        vercelUrl = `https://${d.url || slug + '.vercel.app'}`;
+        // Usa sempre o alias de produção (slug.vercel.app), não d.url que é deployment-specific
+        vercelUrl = `https://${slug}.vercel.app`;
         // aguarda deploy propagar (Vercel é rápido, ~5-10s)
         await new Promise(r => setTimeout(r, 5000));
-        console.log('[Vercel] Deploy OK:', vercelUrl);
+        console.log('[Vercel] Deploy OK:', vercelUrl, '| deployment url:', d.url);
       }
     } catch(e) {
       console.warn('[Vercel] Error:', e.message);
