@@ -311,6 +311,7 @@ const S = {
   status:      lsGet('awt_status', {}),
   pubSt: null,
   ajustesNote: lsGet('awt_ajustes', {}),
+  ajustesImg:  {},
   iter:        lsGet('awt_iter', {}),
   apiKey:      (()=>{ try { return localStorage.getItem('awt_apikey') || ''; } catch(e){ return ''; } })(),
   githubToken: (()=>{ try { return localStorage.getItem('awt_githubtoken') || ''; } catch(e){ return ''; } })(),
@@ -862,6 +863,7 @@ function rGen(p, step, si, type) {
     }
   } else if (st === 'ajustes') {
     const key = p.id + '_' + step.id;
+    const imgStored = S.ajustesImg && S.ajustesImg[key];
     body = `<div>
       <div style="font-size:14px;font-weight:600;margin-bottom:8px">✏️ Descreva o ajuste</div>
       <div style="font-size:12px;color:var(--txt-s);margin-bottom:12px">Você pode colar uma URL de referência — o conteúdo será buscado automaticamente e enviado ao Claude.</div>
@@ -869,6 +871,20 @@ function rGen(p, step, si, type) {
       <div id="url-indicator" style="display:none;margin-top:8px;padding:8px 12px;background:#EDE9F5;border-radius:6px;font-size:12px;color:var(--roxo)">
         🔗 URL detectada — será buscada antes de gerar
       </div>
+      ${type === 'logo' ? `
+      <div style="margin-top:12px;padding:12px 14px;border:1.5px dashed var(--borda);border-radius:8px;background:var(--surface)">
+        <div style="font-size:12px;font-weight:600;color:var(--txt-s);margin-bottom:8px">🖼️ Imagem de referência <span style="font-weight:400">(opcional)</span></div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <label for="ajuste-img-input" style="cursor:pointer;padding:7px 14px;border:1.5px solid var(--borda);border-radius:7px;font-size:12px;color:var(--txt-m);background:#fff;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;user-select:none">
+            📎 Escolher imagem
+          </label>
+          <input id="ajuste-img-input" type="file" accept="image/*" style="display:none" onchange="handleAjusteImgUpload(this, ${p.id}, '${step.id}')">
+          <span id="ajuste-img-label" style="font-size:12px;color:${imgStored ? '#059669' : 'var(--txt-s)'}">
+            ${imgStored ? '✅ Imagem carregada' : 'Nenhuma imagem selecionada'}
+          </span>
+          ${imgStored ? `<button onclick="clearAjusteImg(${p.id}, '${step.id}')" style="font-size:11px;color:#EF4444;background:none;border:none;cursor:pointer;padding:0;line-height:1">✕ remover</button>` : ''}
+        </div>
+      </div>` : ''}
       <div class="btn-row" style="margin-top:14px">
         <button class="btn btn-p" data-a="confirm-ajustes" data-pid="${p.id}" data-sid="${step.id}" data-type="${type}">⚡ Regerar com ajuste</button>
         <button class="btn btn-s" data-a="cancel-ajustes" data-pid="${p.id}" data-sid="${step.id}">Cancelar</button>
@@ -1369,7 +1385,13 @@ async function fetchUrlsFromNote(note) {
 }
 
 // ── CLAUDE API ──
-async function callClaude(prompt, maxTokens = 6000) {
+async function callClaude(prompt, maxTokens = 6000, imgBase64 = null, imgMime = 'image/png') {
+  const content = imgBase64
+    ? [
+        { type: 'image', source: { type: 'base64', media_type: imgMime, data: imgBase64 } },
+        { type: 'text', text: prompt }
+      ]
+    : prompt;
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -1381,7 +1403,7 @@ async function callClaude(prompt, maxTokens = 6000) {
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
-      messages: [{ role: 'user', content: prompt }]
+      messages: [{ role: 'user', content }]
     })
   });
   if (!resp.ok) {
@@ -1753,6 +1775,29 @@ Retorne APENAS o HTML completo com doctype, sem markdown, sem explicações.${lo
 }
 
 // ── ANIMATE GENERATION (mock quando sem API key, real com) ──
+function handleAjusteImgUpload(input, pid, sid) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result; // data:image/xxx;base64,XXXX
+    const comma = dataUrl.indexOf(',');
+    const header = dataUrl.substring(0, comma);
+    const data   = dataUrl.substring(comma + 1);
+    const mime   = (header.match(/:(.*?);/) || [])[1] || 'image/png';
+    if (!S.ajustesImg) S.ajustesImg = {};
+    S.ajustesImg[pid + '_' + sid] = { data, mime };
+    const lbl = document.getElementById('ajuste-img-label');
+    if (lbl) { lbl.textContent = '✅ ' + file.name; lbl.style.color = '#059669'; }
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearAjusteImg(pid, sid) {
+  if (S.ajustesImg) delete S.ajustesImg[pid + '_' + sid];
+  render();
+}
+
 async function animateGen(pid, sid, type) {
   const key = pid + '_' + sid;
 
@@ -1789,6 +1834,7 @@ async function animateGen(pid, sid, type) {
   // ── REAL: chama Claude API (com animação de progresso durante a chamada) ──
   const p = gp(pid);
   const ajusteNote = S.ajustesNote[key] || '';
+  const ajusteImg  = (S.ajustesImg && S.ajustesImg[key]) || null;
 
   // Animação enquanto API responde
   const totalMsgs = { logo: 4, cartao: 4, papelTimbrado: 4, site: 5, fotoCorp: 4 }[type] || 4;
@@ -1818,7 +1864,7 @@ async function animateGen(pid, sid, type) {
   try {
     const prompt = buildPrompt(p, type, ajusteNote);
     const tokenLimit = type === 'logo' ? 1500 : (type === 'cartao' || type === 'papelTimbrado') ? 6000 : 16000;
-    const result = await callClaude(prompt, tokenLimit);
+    const result = await callClaude(prompt, tokenLimit, ajusteImg ? ajusteImg.data : null, ajusteImg ? ajusteImg.mime : 'image/png');
     clearInterval(ivReal);
     // Completa animação rapidamente
     const fill = document.getElementById('pfill-' + type);
