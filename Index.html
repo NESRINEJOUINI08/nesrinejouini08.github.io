@@ -840,13 +840,26 @@ function rGen(p, step, si, type) {
   let body = '';
 
   if (st === 'pending') {
-    body = `<div class="gen-idle">
-      <div class="gen-idle-icon">${labels[type].split(' ')[0]}</div>
-      <p class="gen-idle-desc">${descs[type]}</p>
-      <button class="btn btn-p btn-lg" data-a="gen" data-pid="${p.id}" data-sid="${step.id}" data-type="${type}">
-        ⚡ Gerar ${labels[type].split(' ').slice(1).join(' ')}
-      </button>
-    </div>`;
+    const needsLogoApproval = (type === 'cartao' || type === 'papelTimbrado' || type === 'site');
+    const logoApproved = S.logoApproved && S.logoApproved[p.id];
+    if (needsLogoApproval && !logoApproved) {
+      body = `<div class="gen-idle">
+        <div class="gen-idle-icon">${labels[type].split(' ')[0]}</div>
+        <p class="gen-idle-desc">${descs[type]}</p>
+        <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:12px 16px;font-size:13px;color:#92400E;text-align:center;line-height:1.6">
+          🎨 <strong>Aprove o logo primeiro</strong><br>Volte à etapa Logo, clique em "Aprovar →" para travar o logo e garantir consistência em todos os materiais.
+        </div>
+      </div>`;
+    } else {
+      body = `<div class="gen-idle">
+        <div class="gen-idle-icon">${labels[type].split(' ')[0]}</div>
+        <p class="gen-idle-desc">${descs[type]}</p>
+        ${needsLogoApproval ? `<div style="background:#D1FAE5;border-radius:6px;padding:6px 12px;font-size:11px;color:#065F46;margin-bottom:10px;text-align:center">🔒 Logo aprovado e travado</div>` : ''}
+        <button class="btn btn-p btn-lg" data-a="gen" data-pid="${p.id}" data-sid="${step.id}" data-type="${type}">
+          ⚡ Gerar ${labels[type].split(' ').slice(1).join(' ')}
+        </button>
+      </div>`;
+    }
   } else if (st === 'ajustes') {
     const key = p.id + '_' + step.id;
     body = `<div>
@@ -1181,6 +1194,11 @@ document.addEventListener('click', function(e) {
   }
   if (a === 'done') {
     const pid = parseInt(el.dataset.pid), sid = el.dataset.sid;
+    // Ao aprovar o logo, trava o SVG para usar nas etapas seguintes
+    if (sid === 'logo') {
+      S.logoApproved = S.logoApproved || {};
+      S.logoApproved[pid] = true;
+    }
     sst(pid, sid, 'done');
     const steps = getSteps(gp(pid));
     const ci = steps.findIndex(s => s.id === sid);
@@ -1525,6 +1543,12 @@ function buildPrompt(p, type, ajusteNote) {
   const firstName = p.nomeBanker.split(' ')[0] + ' ' + p.nomeBanker.split(' ').slice(-1)[0];
   const ff = p.fonte === 'serif' ? 'serif elegante (Georgia)' : 'sans-serif moderno (Arial/Montserrat)';
   const ajuste = ajusteNote ? `\n\nAJUSTE PEDIDO (aplique obrigatoriamente): ${ajusteNote}` : '';
+  // Logo travado — injetado nos prompts de cartão, papel e site para garantir consistência
+  const lockedLogoSvg = (S.results && S.results[p.id + '_logo'] && S.results[p.id + '_logo'].trim().startsWith('<svg'))
+    ? S.results[p.id + '_logo'] : null;
+  const logoInstructions = lockedLogoSvg
+    ? `\n\nLOGO APROVADO — USE EXATAMENTE ESTE SVG (não crie nem modifique o logo, reproduza fielmente):\n${lockedLogoSvg}`
+    : `\n\n(Logo: crie visualmente com cor #${p.corHex}, fonte ${ff}, nome "${p.nomeMarca}" — sem SVG travado disponível)`;
 
   if (type === 'logo') return `Você é um designer gráfico sênior especializado em identidade visual para Multi Family Offices (MFO) no mercado financeiro brasileiro.
 
@@ -1586,7 +1610,7 @@ ESTRUTURA HTML:
 - HTML auto-suficiente, sem dependências externas
 - Sem animações, sem JS complexo
 
-Retorne APENAS o HTML completo com doctype, sem markdown, sem explicações.${ajuste}`;
+Retorne APENAS o HTML completo com doctype, sem markdown, sem explicações.${logoInstructions}${ajuste}`;
 
   if (type === 'papelTimbrado') return `Você é um designer especializado em papelaria corporativa para escritórios financeiros brasileiros de alto padrão. Você conhece o padrão visual AWT (VERTA Wealth, Áurea Wealth, GWRK Wealth, TNX Wealth) e vai seguir exatamente esse padrão.
 
@@ -1645,7 +1669,7 @@ ESTRUTURA HTML:
 - HTML auto-suficiente, sem dependências externas
 - Sem animações, sem JS complexo
 
-Retorne APENAS o HTML completo com doctype, sem markdown, sem explicações.${ajuste}`;
+Retorne APENAS o HTML completo com doctype, sem markdown, sem explicações.${logoInstructions}${ajuste}`;
 
   if (type === 'site') return `Você é um desenvolvedor web especializado em landing pages para Multi Family Offices (MFOs) brasileiros de alto padrão. Você tem um estilo autoral forte — cada site que você cria tem uma identidade visual única, não parece template.
 
@@ -1723,7 +1747,7 @@ REGRAS TÉCNICAS:
 - O site deve renderizar completamente mesmo sem JavaScript executando
 - VERIFICAÇÃO FINAL antes de retornar: confira que nenhum elemento tem opacity:0, visibility:hidden, display:none, ou qualquer animation/transition que inicie invisível
 
-Retorne APENAS o HTML completo com doctype, sem markdown, sem explicações.${ajuste}`;
+Retorne APENAS o HTML completo com doctype, sem markdown, sem explicações.${logoInstructions}${ajuste}`;
 
   return '';
 }
